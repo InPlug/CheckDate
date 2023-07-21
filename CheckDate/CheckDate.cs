@@ -1,6 +1,4 @@
-﻿using NetEti.Globals;
-using System;
-using System.Threading;
+﻿using System.ComponentModel;
 using Vishnu.Interchange;
 
 namespace CheckDate
@@ -27,7 +25,7 @@ namespace CheckDate
         /// Wird ausgelöst, wenn sich der Verarbeitungsfortschritt dieses INodeCheckers
         /// geändert hat.
         /// </summary>
-        public event CommonProgressChangedEventHandler NodeProgressChanged;
+        public event ProgressChangedEventHandler? NodeProgressChanged;
 
         /// <summary>
         /// Das Ergebnis (aktueller Zeitpunkt). Vergleiche führt Vishnu typgerecht über
@@ -35,7 +33,7 @@ namespace CheckDate
         /// Bei Verarbeitung von komplexen eigenen Typen muss die ToString()-Methode des ReturnObjects
         /// einen für Vergleiche entsprechend aufbereiteteten String zurückliefern.
         /// </summary>
-        public object ReturnObject
+        public object? ReturnObject
         {
             get
             {
@@ -57,9 +55,9 @@ namespace CheckDate
         /// <param name="treeParameters">Für den gesamten Tree gültige Parameter oder null.</param>
         /// <param name="source">Auslösendes TreeEvent oder null.</param>
         /// <returns>True, False oder null</returns>
-        public bool? Run(object checkerParameters, TreeParameters treeParameters, TreeEvent source)
+        public bool? Run(object? checkerParameters, TreeParameters treeParameters, TreeEvent source)
         {
-            string pString = (checkerParameters ?? "").ToString().Trim();
+            string pString = (checkerParameters)?.ToString()?.Trim() ?? "";
             string[] paraStrings = pString.Split('|');
             string waitMSstr = paraStrings[0].Trim();
             int waitMS = 0;
@@ -68,14 +66,14 @@ namespace CheckDate
                 Int32.TryParse(waitMSstr, out waitMS);
             }
             this._returnObject = null;
-            this.OnNodeProgressChanged(String.Format("{0}", this.GetType().Name), 100, 0, ItemsTypes.items);
+            this.OnNodeProgressChanged(0);
             Thread.Sleep(waitMS);
-            this.OnNodeProgressChanged(String.Format("{0}", this.GetType().Name), 100, 33, ItemsTypes.items);
+            this.OnNodeProgressChanged(33);
             Thread.Sleep(waitMS);
-            this.OnNodeProgressChanged(String.Format("{0}", this.GetType().Name), 100, 66, ItemsTypes.items);
+            this.OnNodeProgressChanged(66);
             Thread.Sleep(waitMS);
             this._returnObject = DateTime.Now;
-            this.OnNodeProgressChanged(String.Format("{0}", this.GetType().Name), 100, 100, ItemsTypes.items);
+            this.OnNodeProgressChanged(100);
 
             return true;
         }
@@ -99,14 +97,11 @@ namespace CheckDate
 
         #region private members
 
-        private object _returnObject = null;
+        private object? _returnObject = null;
 
-        private void OnNodeProgressChanged(string itemsName, int countAll, int countSucceeded, ItemsTypes itemsType)
+        private void OnNodeProgressChanged(int progressPercentage)
         {
-            if (NodeProgressChanged != null)
-            {
-                NodeProgressChanged(null, new CommonProgressChangedEventArgs(itemsName, countAll, countSucceeded, itemsType, null));
-            }
+            NodeProgressChanged?.Invoke(null, new ProgressChangedEventArgs(progressPercentage, null));
         }
 
         #endregion private members
