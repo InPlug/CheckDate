@@ -31,7 +31,7 @@ namespace CheckDate
         /// Das Ergebnis (aktueller Zeitpunkt). Vergleiche führt Vishnu typgerecht über
         /// die Klasse 'NodeResultComparer' aus; bekannte Typen sind: bool, DateTime, String, int, double.
         /// Bei Verarbeitung von komplexen eigenen Typen muss die ToString()-Methode des ReturnObjects
-        /// einen für Vergleiche entsprechend aufbereiteteten String zurückliefern.
+        /// einen für Vergleiche entsprechend aufbereiteten String zurückliefern.
         /// </summary>
         public object? ReturnObject
         {
